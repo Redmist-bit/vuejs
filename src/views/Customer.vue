@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <h3 class="mt-4 mb-4 ml-4">DAFTAR PELANGGAN</h3>
+    <button @click="logout">logout</button>
     <v-divider vertical></v-divider>
     <v-data-table fixed-header :headers="headers" :items="item" sort-by="kode">
       <template v-slot:top>
@@ -177,6 +178,8 @@
 import api from '../services/http'
 export default {
   data: () => ({
+    token : localStorage.getItem('token'),
+
     dialog: false,
     headers: [
       { text: "Kode", value: "id" },
@@ -263,13 +266,22 @@ export default {
 
   mounted(){
     this.getData()
+    console.log(this.token)
   },
 
   methods: {
+    logout(){
+      api.post('/logout?token='+this.token)
+      .then(
+        localStorage.removeItem('token'),
+        // console.log('berhasil logout'),
+        this.$router.push('/')
+      )
+    },
     getData(){
-      api.get('/customers').then(
+      api.get('/customers?token='+this.token).then(
         res=>{
-          console.log(res.data)
+          console.log(res)
           this.item = res.data
         },
         err => {
@@ -278,7 +290,7 @@ export default {
       )
     },
     TambahData(){
-      api.post('/customers', {
+      api.post('/customers?token='+this.token, {
         Nama: this.editedItem.Nama,
         BadanHukum: this.editedItem.BadanHukum,
         Alamat: this.editedItem.Alamat,
@@ -324,7 +336,7 @@ export default {
     },
 
     HapusData(item, index){
-      api.delete('/customers/'+item.id)
+      api.delete('/customers/'+item.id+'?token='+this.token)
       .then((res)=> {
         this.item.splice(index, 1)
         console.log(res)
@@ -335,7 +347,7 @@ export default {
     },
 
     UpdateData(){
-      api.put('/customers/' + this.editedItem.id, {
+      api.put('/customers/' + this.editedItem.id +'?token='+this.token, {
         Nama: this.editedItem.Nama,
         BadanHukum: this.editedItem.BadanHukum,
         Alamat: this.editedItem.Alamat,
@@ -392,15 +404,23 @@ export default {
       });
     },
 
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.item[this.editedIndex], this.editedItem);
-      } else {
-        this.item.push(this.editedItem);
-        this.TambahData(this.editedItem)
+    // save() {
+    //   if (this.editedIndex > -1) {
+    //     Object.assign(this.item[this.editedIndex], this.editedItem);
+    //   } else {
+    //     this.item.push(this.editedItem);
+    //     this.TambahData(this.editedItem)
+    //   }
+    //   this.close();
+    // },
+    save(){
+      if(this.formTitle === "Add New Customer"){
+        this.TambahData()
+      }else{
+        this.UpdateData()
       }
-      this.close();
-    },
+      this.close()
+    }
   },
 };
 </script>

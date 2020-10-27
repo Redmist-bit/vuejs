@@ -12,7 +12,7 @@
       </v-col>
 
       <v-col cols="12" class="mb-2">
-        <v-card class="mx-auto" max-width="600" outlined>
+        <!-- <v-card class="mx-auto" max-width="600" outlined>
           <v-list-item three-line>
             <v-list-item-content>
               <div class="overline mb-4">Login Form</div>
@@ -31,7 +31,7 @@
 
                 <v-btn color="error" class="mr-4" @click="reset">Reset Form</v-btn>
 
-                <v-btn color="success" type="submit" @click="submit">Log-in</v-btn>
+                <v-btn color="success" type="submit" @click.prevent="login">Log-in</v-btn>
                 <v-col md-12 class="mt-2">
                   <p>
                     Belum Punya Akun?
@@ -41,7 +41,22 @@
               </v-form>
             </v-list-item-content>
           </v-list-item>
-        </v-card>
+        </v-card> -->
+
+        <div class="login">
+          <form action="" class="form">
+            <div class="form-group">
+              <input type="text" placeholder="Email1" class="form-control" v-model="email1">
+            </div>
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control" v-model="credentials.email">
+            </div>
+            <div class="form-group">
+              <input type="text" placeholder="Password" class="form-control" v-model="credentials.password">
+            </div>
+            <button class="btn btn-primary" @click="login">Login</button>
+          </form>
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -50,32 +65,76 @@
 <script>
 import axios from 'axios'
 export default {
-  
+  token: '',
+  name:"login",
   data: () => ({
+    sementara: [],
     show1: false,
-    
-            
-                email: '',
-                password: '',
-            
+    email1:'',
+      credentials:{
+        email: '',
+        password: ''
+      },
+    return:{
+      loading: true
+  
+    },
+
         
   }),
+  mounted(){
+    // this.token = localStorage.getItem('token')
+    // if(localStorage.state.token !== ''){
+    //   this.$router.push('/customer')
+    // }
+    // console.log(this.token)
+  },
   methods: {
-    reset() {
-      this.$refs.form.reset();
-    },
-    async submit() {
-            const url = 'http://localhost:8000/api/login';
-            const response = await axios.post(url, this.form, {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            });
+    // reset() {
+    //   this.$refs.form.reset();
+    // },
+    // async login() {
+    //         const url = 'http://localhost:8000/api/login';
+    //         const response = await axios.post(url, this.credentials, {
+    //             headers: {
+    //                 Accept: 'application/json',
+    //                 'Content-Type': 'application/json',
+    //             },
+    //         });
 
-            console.log(response);
-            // this.$router.replace({ name: 'home' });
-        },
+    //         console.log(response);
+    //         // this.$router.replace({ name: 'home' });
+    //     },
+    login(){
+      axios.post('http://localhost:8000/api/login', this.credentials)
+        .then(res=>{
+          // console.log(res.data.token)
+          
+          localStorage.setItem('token', res.data.token)
+          this.$router.push('/customer')
+          // if(res.data.success){
+          //   this.res.push(this.sementara)
+          //   localStorage.email1 = this.email1
+          //   // this.$store.commit('LOGIN_SUCCESS', res)
+          //   // this.$store.state.user.token
+          //   // // console.log(res.data)
+          //   // this.$store.commit('setToken', this.$store.state.user.token)
+          //   // localStorage.setItem('token', this.$store.state.user.token)
+          //   // localStorage.setItem('token', JSON.stringify(res.data))
+          //   // localStorage.getItem(res.data.token)
+          //   // cookies.setItem('token',res.data.token)
+          //   this.result = res.data
+          //   this.$store.state.token = this.result.token
+          //   console.log(this.sementara)
+          // }
+        })
+        .catch(err=>{
+          console.log(err)
+          console.log('email atau password salah')
+        })
+        // localStorage.setItem('token', res.data.token)
+        //     localStorage.getItem(res.token)
+    }
   },
 };
 

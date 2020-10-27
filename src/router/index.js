@@ -9,6 +9,8 @@ import invoice from "../views/Invoice.vue";
 import pembelian from "../views/Pembelian.vue";
 
 import pekerjaan from "../views/pekerjaan.vue";
+import syncfusion from "../views/syncfusion.vue";
+import gridsync from "../components/Grid.vue"
 Vue.use(VueRouter);
 
 export default new VueRouter({
@@ -45,5 +47,13 @@ export default new VueRouter({
       path: "/pekerjaan",
       component: pekerjaan,
     },
+    {
+      path:"/syncfusion",
+      component: syncfusion
+    },
+    {
+      path:"/gridsyncfusion",
+      component: gridsync
+    }
   ],
 });

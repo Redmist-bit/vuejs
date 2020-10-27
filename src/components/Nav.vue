@@ -25,6 +25,8 @@
       <v-btn class="mr-2" color="primary" to="pembelian">pembelian</v-btn>
       <v-btn class="mr-2" color="primary" to="invoice">Invoice</v-btn>
       <v-btn class="mr-2" color="primary" to="customer">Customer</v-btn>
+      <v-btn class="mr-2" color="primary" to="syncfusion">syncfusion</v-btn>
+      <v-btn class="mr-2" color="primary" to="gridsyncfusion">gridSync</v-btn>
     </v-app-bar>
     <v-navigation-drawer
       app
