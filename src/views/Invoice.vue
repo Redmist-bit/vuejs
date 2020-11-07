@@ -1,250 +1,693 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="invoice"
-    sort-by="name"
-    class="elevation-1 d.flex"
-  >
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>Daftar Invoice</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="1000px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              New Item
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+  <v-col cols="12" md="12">
 
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field
-                      v-model="editedItem.KodeNota"
-                      label="Kode Nota"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
-                    <v-combobox
-                      v-model="editedItem.MataUang"
-                      label="Mata Uang"
-                      :items="itemsMataUang"
-                    ></v-combobox>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-menu
-                      v-model="menu1"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="editedItem.Tanggal"
-                          label="Tanggal"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
+    <v-toolbar flat dark dense color="danger" class="elevation-1">
+      <v-toolbar-title>Daftar Invoice</v-toolbar-title>
+      <v-divider class="mx-4" inset vertical></v-divider>
+      <v-spacer></v-spacer>
+      <v-dialog v-model="dialog" max-width="1000px">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn color="primary" dark v-bind="attrs" v-on="on"  class="mx-2"  medium>
+              <v-icon dark>mdi-plus</v-icon>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-title>
+            <span class="headline">{{ formTitle }}</span>
+          </v-card-title>
+
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12" sm="6" md="6">
+                  <v-text-field
+                    v-model="editedItem.KodeNota"
+                    label="Kode Nota"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <v-combobox
+                    v-model="editedItem.MataUang"
+                    label="Mata Uang"
+                    :items="itemsMataUang"
+                  ></v-combobox>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-menu
+                    v-model="menu1"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
                         v-model="editedItem.Tanggal"
-                        @input="menu1 = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.Kurs"
-                      label="Kurs"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.Pelanggan"
-                      label="Pelangan"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.Refrensi"
-                      label="Refrensi"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field v-model="editedItem.NomorWo" label="Nomer WO">
-                      <template v-slot:append-outer>
-                        <button @click="parsing">tes</button>
-                        <CariWo  v-on:lempar="updateWo($event)"/>
-                      </template>
-                      
-                        <button>in</button>
-                      
-                    </v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.Kass"
-                      label="Kass"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.NomorRangka"
-                      label="Nomer Rangka"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.KTtg"
-                      label="KT tg"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.NomorMesin"
-                      label="Nomor Mesin"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.Ddtb"
-                      label="Dd tb"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.NomorPolisi"
-                      label="Nomor Polisi"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.Kppn"
-                      label="KPpn"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.Odometer"
-                      label="Odometer"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.Kexc"
-                      label="Kexc"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.PaymentTerm"
-                      label="Payment Term"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="mt-n8">
-                    <v-text-field
-                      v-model="editedItem.Kund"
-                      label="KUND"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-btn class="mb-2">Load Estimasi Terakhir</v-btn>
-                </v-row>
-                <v-row>
-                  <h5>
+                        label="Tanggal"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="editedItem.Tanggal"
+                      @input="menu1 = false"
+                    ></v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.Kurs"
+                    label="Kurs"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.Pelanggan"
+                    label="Pelangan"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.Refrensi"
+                    label="Refrensi"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field v-model="editedItem.NomorWo" label="Nomer WO">
+                    <template v-slot:append-outer>
+                      <button @click="parsing">tes</button>
+                      <CariWo  v-on:lempar="updateWo($event)"/>
+                    </template>
+                    
+                      <button>in</button>
+                    
+                  </v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.Kass"
+                    label="Kass"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.NomorRangka"
+                    label="Nomer Rangka"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.KTtg"
+                    label="KT tg"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.NomorMesin"
+                    label="Nomor Mesin"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.Ddtb"
+                    label="Dd tb"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.NomorPolisi"
+                    label="Nomor Polisi"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.Kppn"
+                    label="KPpn"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.Odometer"
+                    label="Odometer"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.Kexc"
+                    label="Kexc"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.PaymentTerm"
+                    label="Payment Term"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="6" class="mt-n8">
+                  <v-text-field
+                    v-model="editedItem.Kund"
+                    label="KUND"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-btn class="mb-2">Load Estimasi Terakhir</v-btn>
+              </v-row>
+              <v-row>
+                <h5>
 
-                    WO:{{selected}}
-                  </h5>
-                </v-row>
-                <v-row>
-                  <v-tabs>
-                    <v-tab
-                      >Barang
-                      <v-tab-item>h1 tes</v-tab-item>
-                    </v-tab>
-                    <v-tab>Pekerjaan</v-tab>
-                    <v-tab-item>
-                      <v-card>
-                        <Barang />
-                      </v-card>
-                    </v-tab-item>
-                    <v-tab-item>
-                      <v-card>
-                        <v-container>
-                          <Pekerjaan />
-                        </v-container>
-                      </v-card>
-                    </v-tab-item>
-                  </v-tabs>
-                </v-row>
-                <v-row class="flex-row-reverse mt-n6">
-                  <v-col cols="4">
-                    <v-text-field></v-text-field>
-                  </v-col>
-                  <v-col cols="1 mt-4">
-                    <v-subheader>DPP</v-subheader>
-                  </v-col>
-                </v-row>
-                <v-row class="flex-row-reverse mt-n12">
-                  <v-col cols="3">
-                    <v-text-field></v-text-field>
-                  </v-col>
+                  WO:{{selected}}
+                </h5>
+              </v-row>
+              <v-row>
+                <v-tabs>
+                  <v-tab
+                    >Barang
+                    <v-tab-item>h1 tes</v-tab-item>
+                  </v-tab>
+                  <v-tab>Pekerjaan</v-tab>
+                  <v-tab-item>
+                    <v-card>
+                      <Barang />
+                    </v-card>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-card>
+                      <v-container>
+                        <Pekerjaan />
+                      </v-container>
+                    </v-card>
+                  </v-tab-item>
+                </v-tabs>
+              </v-row>
+              <v-row class="flex-row-reverse mt-n6">
+                <v-col cols="4">
+                  <v-text-field></v-text-field>
+                </v-col>
+                <v-col cols="1 mt-4">
+                  <v-subheader>DPP</v-subheader>
+                </v-col>
+              </v-row>
+              <v-row class="flex-row-reverse mt-n12">
+                <v-col cols="3">
+                  <v-text-field></v-text-field>
+                </v-col>
 
-                  <v-col cols="1">
-                    <v-text-field></v-text-field>
-                  </v-col>
-                  <v-col cols="1 mt-4">
-                    <v-subheader>PPN</v-subheader>
-                  </v-col>
-                </v-row>
-                <v-row class="flex-row-reverse mt-n12">
-                  <v-col cols="4">
-                    <v-text-field></v-text-field>
-                  </v-col>
-                  <v-col cols="1 mt-4">
-                    <v-subheader>Total Bayar</v-subheader>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
+                <v-col cols="1">
+                  <v-text-field></v-text-field>
+                </v-col>
+                <v-col cols="1 mt-4">
+                  <v-subheader>PPN</v-subheader>
+                </v-col>
+              </v-row>
+              <v-row class="flex-row-reverse mt-n12">
+                <v-col cols="4">
+                  <v-text-field></v-text-field>
+                </v-col>
+                <v-col cols="1 mt-4">
+                  <v-subheader>Total Bayar</v-subheader>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close"> Cancel </v-btn>
-              <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:[`item.WriteOff`]>
-      <v-checkbox dense small class="mr-2"></v-checkbox>
-    </template>
-    <template v-slot:[`item.actions`]="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> Reset </v-btn>
-    </template>
-  </v-data-table>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="close"> Cancel </v-btn>
+            <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-toolbar>
+
+    <div id="app">
+      <ejs-grid
+          :dataSource="invoice"
+          height="200"
+          width="100%"
+          :allowReordering = true
+          :editSettings='editSettings'
+          :selectionSettings='selectionOptions'
+          :allowGrouping='true'
+          :groupSettings='groupSettings'
+          :allowSorting='true'
+          :allowMultiSorting='true'
+          :allowFiltering='true'
+          :filterSettings='filterOptions'
+          :allowResizing='true'
+          :allowPaging='true'
+          :pageSettings='pageSettings'
+          :toolbar='toolbarOptions'
+          :commandClick="commandClick"
+          >
+          <e-columns>
+              <e-column field="Commands" headerText="Action" width="150" :commands="commands">
+                  <div class="btn-group">
+                      <button type="button" class="btn btn-default" (click)='prediemRowEdit($event)'>
+                          <i class="fa fa-pencil"></i></button>
+                      <button type="button" class="btn btn-default" (click)='prediemRowDelete($event)'>
+                          <i class="fa fa-trash"></i></button>
+                  </div>
+              </e-column>
+              <e-column
+                  :filter='filter'
+                  field='KodeNota'
+                  headerText='Kode Nota'
+                  textAlign='Left'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Tanggal'
+                  headerText='Tanggal'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Lokasi'
+                  headerText='Lokasi'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='KetWO'
+                  headerText='KetWO'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='NamaPelanggan'
+                  headerText='Nama Pelanggan'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='NamaPemilik'
+                  headerText='Nama Pemilik'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='NomorRangka'
+                  headerText='Nomor Rangka'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='NomorMesin'
+                  headerText='Nomor Mesin'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='NomorPolisi'
+                  headerText='Nomor Polisi'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Odometer'
+                  headerText='Odometer'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Status'
+                  headerText='Status'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='KeteranganStatus'
+                  headerText='Keterangan Status'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Keterangan'
+                  headerText='Keterangan'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Saran'
+                  headerText='Saran'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='NomorWO'
+                  headerText='Nomor WO'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='PaymentTerm'
+                  headerText='Payment Term'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Total'
+                  headerText='Total'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Diskon'
+                  headerText='Diskon'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='DPP'
+                  headerText='DPP'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='PPn'
+                  headerText='PPn'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='PPnPersen'
+                  headerText='PPn Persen'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='PPnPersenManual'
+                  headerText='PPn Persen Manual'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='OnRisk'
+                  headerText='ON RISK'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='TotalBayar'
+                  headerText='Total Bayar'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Nett'
+                  headerText='Nett'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Terbayar'
+                  headerText='Terbayar'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='SisaBayar'
+                  headerText='Sisa Bayar'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Kass'
+                  headerText='Kass'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='KTtg'
+                  headerText='KTtg'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Ddtb'
+                  headerText='Ddtb'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='KPpn'
+                  headerText='KPpn'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Kexc'
+                  headerText='Kexc'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Kund'
+                  headerText='Kund'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='MataUang'
+                  headerText='Mata Uang'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Kurs'
+                  headerText='Kurs'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Refrensi'
+                  headerText='Refrensi'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='KeteranganPenagihan'
+                  headerText='Keterangan Penagihan'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='PIC'
+                  headerText='PIC'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='InfoPemilik'
+                  headerText='Info Pemilik'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='NoFakturPajak'
+                  headerText='No Faktur Pajak'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='TglKirim'
+                  headerText='Tanggal Kirim'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Kurs'
+                  headerText='Kurs'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Refrensi'
+                  headerText='Refrensi'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='KeteranganPenagihan'
+                  headerText='Keterangan Penagihan'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='PIC'
+                  headerText='PIC'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='InfoPemilik'
+                  headerText='Info Pemilik'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='NoFakturPajak'
+                  headerText='No Faktur Pajak'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='TglKirim'
+                  headerText='Tanggal Kirim'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='TglKonfirmasiTerima'
+                  headerText='Tanggal Konfirmasi Terima'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='NoResi'
+                  headerText='No Resi'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='JumlahCetak'
+                  headerText='Jumlah Cetak'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='TanggalMasuk'
+                  headerText='Tanggal Masuk'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='TanggalKeluar'
+                  headerText='Tanggal Keluar'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='WriteOff'
+                  headerText='Write Off'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='DibBuatTgl'
+                  headerText='Di Buat Tanggal'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='DiBuatOleh'
+                  headerText='Di Buat Oleh'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='DiUbahTgl'
+                  headerText='Di Ubah Tanggal'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='DiUbahOleh'
+                  headerText='Di Ubah Oleh'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='Pelanggan'
+                  headerText='Pelanggan'
+                  width=180
+              ></e-column>
+
+              <e-column
+                  :filter='filter'
+                  field='SellTo'
+                  headerText='Sell To'
+                  width=180
+              ></e-column>
+          </e-columns>
+      </ejs-grid>
+    </div>
+  </v-col>
+    
+    
+  
 </template>
 
 <script>
+import Vue from "vue";
+import { GridPlugin, Toolbar, Page, Aggregate, Resize, Filter, Sort, Group, Edit, CommandColumn, Reorder,   } from "@syncfusion/ej2-vue-grids";
 import Barang from "./barang";
 import Pekerjaan from "./pekerjaan";
 import CariWo from "../components/CariWo";
+Vue.use(GridPlugin);
 // import func from '../../vue-temp/vue-editor-bridge';
 export default {
   components: {
@@ -453,7 +896,22 @@ export default {
       Pelanggan:'',
       SellTo:''
     },
+    groupSettings: { allowReordering: true },
+    selectionOptions: { type: 'Multiple' },
+    toolbarOptions: ['Search'],
+    pageSettings: {pageSize: 5, pageSizes :['5','10','15','20','50','All']},
+    filterOptions: { type: 'Menu' },
+    filter: { type : 'CheckBox' },
+    editSettings: { showDeleteConfirmDialog: true, allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog' },
+    commands: [
+            {  buttonOption: { cssClass: 'e-flat Edit', iconCss: 'e-edit e-icons' } },
+        { buttonOption: { cssClass: 'e-flat Delete', iconCss: 'e-delete e-icons' } },
+        ],
   }),
+
+  provide: {
+        grid: [Page, Toolbar, Aggregate, Resize, Filter, Sort, Group, Edit, CommandColumn, Reorder]
+    },
 
   computed: {
     formTitle() {
@@ -472,6 +930,40 @@ export default {
   },
 
   methods: {
+    commandClick: function(args) {
+        if (args.target.classList.contains("custombutton")) {
+            // let tampung = []
+            let data = JSON.stringify(args.rowData)
+            // console.log(args);
+            // alert(JSON.stringify(args.rowData));
+            // console.log(JSON.stringify(args.rowData))
+            // tampung.push(args.rowData)
+            // this.editedItem = Object.assign({},data)
+            console.log(data)
+        } else if (args.target.classList.contains("Delete")) {
+            var r = confirm("Yakin Hapus Data?");
+            if (r == true) {
+                // api.delete('/customers/'+args.rowData.id+'?token='+this.token)
+                // .then((res)=> {
+                //     // this.item.splice(index, 1)
+                //     console.log(res)
+                //     this.getData()
+                // })
+                // .catch((err)=> {
+                //     console.log(err)
+                // })
+            } 
+            // let data = JSON.stringify(args.rowData)
+            // console.log(data)
+            // console.log(args)
+            
+        } else if (args.target.classList.contains('Edit')) {
+            let data = args
+            this.editedIndex = 1;
+            console.log(data)
+            this.editedItem = data.rowData
+            this.dialog = true
+        }},
     parsing: function(){
       this.editedItem.NomorWo=this.selected[0]["NomorWo"]
     },

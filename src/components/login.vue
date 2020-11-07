@@ -46,9 +46,6 @@
         <div class="login">
           <form action="" class="form">
             <div class="form-group">
-              <input type="text" placeholder="Email1" class="form-control" v-model="email1">
-            </div>
-            <div class="form-group">
               <input type="text" placeholder="Email" class="form-control" v-model="credentials.email">
             </div>
             <div class="form-group">
@@ -63,7 +60,8 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '../services/http'
+// import axios from 'axios'
 export default {
   token: '',
   name:"login",
@@ -106,12 +104,19 @@ export default {
     //         // this.$router.replace({ name: 'home' });
     //     },
     login(){
-      axios.post('http://localhost:8000/api/login', this.credentials)
+      api.post('/login', this.credentials)
         .then(res=>{
           // console.log(res.data.token)
           
           localStorage.setItem('token', res.data.token)
-          this.$router.push('/customer')
+          if(res.data.status == false){
+            console.log('email atau password salah')
+            alert('Email Atau Passwrd Salah')
+          } else {
+            alert('Login Succes')
+            this.$router.push('/customer')
+          }
+
           // if(res.data.success){
           //   this.res.push(this.sementara)
           //   localStorage.email1 = this.email1

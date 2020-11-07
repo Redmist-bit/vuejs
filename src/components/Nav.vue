@@ -16,17 +16,19 @@
       </v-layout>
       <v-divider></v-divider>
     </v-navigation-drawer>-->
-    <v-app-bar app color="primary" dark>
+    <v-app-bar app color="primary" dark>   
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-spacer></v-spacer>
+      <v-btn class="mr-2" color="primary" to="invoice">invoice</v-btn>
       <v-btn class="mr-2" color="primary" to="home">Home</v-btn>
       <v-btn class="mr-2" color="primary" to="/">LogIn</v-btn>
       <v-btn class="mr-2" color="primary" to="pembelian">pembelian</v-btn>
-      <v-btn class="mr-2" color="primary" to="invoice">Invoice</v-btn>
+      <v-btn class="mr-2" color="primary" to="invosync">InvoiceSync</v-btn>
       <v-btn class="mr-2" color="primary" to="customer">Customer</v-btn>
       <v-btn class="mr-2" color="primary" to="syncfusion">syncfusion</v-btn>
       <v-btn class="mr-2" color="primary" to="gridsyncfusion">gridSync</v-btn>
+      <v-btn class="mr-2" color="primary" to="custsync">CustSync</v-btn>
     </v-app-bar>
     <v-navigation-drawer
       app

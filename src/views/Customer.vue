@@ -286,6 +286,8 @@ export default {
         },
         err => {
           console.log(err)
+          this.$router.push('/')
+          localStorage.removeItem('token')
         }
       )
     },

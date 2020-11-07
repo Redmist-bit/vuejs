@@ -194,7 +194,7 @@
                       field='totalbayar'
                       headerText='Total Bayar'
                       textAlign='Right'
-                      :format="{ format: 'C2', currency: 'IDR' }"
+                      :format="{ format: 'C2', currency: 'Rp' }"
                       width=160
                       >
                     </e-column>
@@ -547,7 +547,9 @@ export default {
 
       footerSum: function () {
         return  { template : Vue.component('SumTemplate', {
-            template: `<span>Sum: {{data.Sum}}</span>`,
+            template: `
+            <h1>SUM</h1>
+            <span>Sum: {{data.Sum}}</span>`,
             data () {return { data: {}};}
             })
           }

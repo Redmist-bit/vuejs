@@ -11,6 +11,8 @@ import pembelian from "../views/Pembelian.vue";
 import pekerjaan from "../views/pekerjaan.vue";
 import syncfusion from "../views/syncfusion.vue";
 import gridsync from "../components/Grid.vue"
+import custsync from "../views/CustomerSync.vue"
+import invsync from "../views/InvoiceSync.vue"
 Vue.use(VueRouter);
 
 export default new VueRouter({
@@ -54,6 +56,14 @@ export default new VueRouter({
     {
       path:"/gridsyncfusion",
       component: gridsync
+    },
+    {
+      path:"/custsync",
+      component:custsync
+    },
+    {
+      path:"/invosync",
+      component:invsync
     }
   ],
 });
