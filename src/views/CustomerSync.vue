@@ -2,14 +2,14 @@
 <v-col cols="12" md="12">
     <v-toolbar flat dark dense color="danger" class="elevation-1">
         <v-toolbar-title dark>
-            <v-icon>mdi-cart</v-icon>
             Customers
         </v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
-        <v-dialog v-model="dialog" max-width="1000px">
+        <v-spacer></v-spacer>
+        <v-dialog v-model="dialog" max-width="700px">
             <template v-slot:activator="{on, attrs}">
-                <v-btn color="primary" dark v-bind="attrs" v-on="on" >
-                    <v-icon>mdi-plus</v-icon>TAMBAH
+                <v-btn color="primary" dark v-bind="attrs" v-on="on" class="mx-2"  medium>
+                    <v-icon>mdi-plus</v-icon>
                 </v-btn>
             </template>
             <v-card>
@@ -27,17 +27,18 @@
                                 label="Kode"
                             ></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" md="8">
+                            <v-col cols="12" sm="6" md="7">
                             <v-text-field
                                 v-model="editedItem.Nama"
                                 label="Nama"
                             ></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" md="2">
-                            <v-text-field
-                                v-model="editedItem.BadanHukum"
-                                label="Badan Hukum"
-                            ></v-text-field>
+                            <v-col cols="12" sm="6" md="3">
+                            <v-combobox
+                            v-model="editedItem.BadanHukum"
+                            label="Badan Hukum"
+                            :items="itemsBadanHukum"
+                            ></v-combobox>
                             </v-col>
                             <v-col cols="12" sm="6" md="12">
                             <v-text-field
@@ -45,19 +46,19 @@
                                 label="Alamat"
                             ></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" md="6">
+                            <v-col cols="12" sm="6" md="4">
                             <v-text-field
                                 v-model="editedItem.Kota"
                                 label="Kota"
                             ></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" md="6">
+                            <v-col cols="12" sm="6" md="4">
                             <v-text-field
                                 v-model="editedItem.KodePos"
                                 label="Kode Pos"
                             ></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" md="6">
+                            <v-col cols="12" sm="6" md="4">
                             <v-text-field
                                 v-model="editedItem.Negara"
                                 label="Negara"
@@ -100,12 +101,14 @@
                             ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                            <!-- <v-switch
+                            <v-switch
                                 v-model="editedItem.Aktif"
                                 color="primary"
                                 label="Aktif"
-                            ></v-switch> -->
-                            <v-text-field v-model="editedItem.Aktif" label="Aktif"></v-text-field>
+                                true-value="True"
+                                false-value="False"
+                            ></v-switch>
+                            <!-- <v-text-field v-model="editedItem.Aktif" label="Aktif"></v-text-field> -->
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                             <v-text-field
@@ -337,6 +340,7 @@ Vue.use(GridPlugin);
 export default {
     data() {
         return {
+        itemsBadanHukum:["PT","CV","UD","-"],
             editedIndex: -1,
             defaultItem: {
             name: "",
